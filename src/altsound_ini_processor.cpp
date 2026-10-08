@@ -128,6 +128,11 @@ bool AltsoundIniProcessor::parse_altsound_ini(const std::filesystem::path& path_
 	inipp::get_value(ini.sections["system"], "stack_ducking", stack_ducking_str);
 	stack_ducking = (stack_ducking_str == "1");
 	ALT_INFO(0, "Parsed \"stack_ducking\": %s", stack_ducking ? "true" : "false");
+	// get loop points flag
+	string loop_points;
+	inipp::get_value(ini.sections["system"], "use_loop_points", loop_points);
+	use_loop_points = (loop_points == "1");
+	ALT_INFO(0, "Parsed \"use_loop_points\": %s", use_loop_points ? "true" : "false");
 
 	// get AltSound format type
 	inipp::get_value(ini.sections["format"], "format", altsound_format);
@@ -638,6 +643,12 @@ bool AltsoundIniProcessor::create_altsound_ini(const std::filesystem::path& path
 		";                     give 45, as the ducks add up in dB on many sound boards)\n"
 		";                     instead of using only the lowest one. This feature is\n"
 		";                     turned off by default\n"
+		"; use_loop_points   : a looping sample that has loop points (the first loop of\n"
+		";                     a WAV \"smpl\" chunk, or LOOPSTART/LOOPLENGTH tags in a\n"
+		";                     FLAC or Ogg file) plays from its start once, then\n"
+		";                     repeats only the loop, like an intro + loop music on the\n"
+		";                     real sound board. Samples without loop points loop as a\n"
+		";                     whole file. This feature is turned off by default\n"
 		"; ----------------------------------------------------------------------------\n"
 		"\n"
 		"[system]\n"
@@ -647,6 +658,7 @@ bool AltsoundIniProcessor::create_altsound_ini(const std::filesystem::path& path
 		"cmd_skip_count = 0\n"
 		"duck_release_ms = 0\n"
 		"stack_ducking = 0\n"
+		"use_loop_points = 0\n"
 		"\n"
 		"; ----------------------------------------------------------------------------\n"
 		"; There are three supported AltSound formats:\n"
