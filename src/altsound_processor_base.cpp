@@ -29,6 +29,7 @@ float AltsoundProcessorBase::global_vol = 1.0f;
 float AltsoundProcessorBase::master_vol = 1.0f;
 std::unordered_map<unsigned int, float> AltsoundProcessorBase::stream_vol;
 unsigned int AltsoundProcessorBase::duck_release_ms = 0;
+bool AltsoundProcessorBase::stack_ducking = false;
 
 // reference to sound command recording status
 extern bool rec_snd_cmds;

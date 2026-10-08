@@ -75,6 +75,9 @@ public:
 	// duck release time accessor/mutator
 	static void setDuckReleaseMs(const unsigned int release_ms_in);
 	static unsigned int getDuckReleaseMs();
+	// duck stacking flag accessor/mutator
+	static void stackDucking(const bool stack_ducking_in);
+	static bool stackDucking();
 
 	// command skip count accessor/mutator
 	void setSkipCount(const unsigned int skip_count_in);
@@ -149,6 +152,7 @@ private: // data
 	static float master_vol;
 	static std::unordered_map<unsigned int, float> stream_vol; // per stream volume, before the global and master volume
 	static unsigned int duck_release_ms;
+	static bool stack_ducking;
 	unsigned int skip_count;
 };
 
@@ -210,8 +214,20 @@ inline void AltsoundProcessorBase::setDuckReleaseMs(const unsigned int release_m
 
 // ----------------------------------------------------------------------------
 
+inline void AltsoundProcessorBase::stackDucking(const bool stack_ducking_in) {
+	stack_ducking = stack_ducking_in;
+}
+
+// ----------------------------------------------------------------------------
+
 inline unsigned int AltsoundProcessorBase::getDuckReleaseMs() {
 	return duck_release_ms;
+}
+
+// ----------------------------------------------------------------------------
+
+inline bool AltsoundProcessorBase::stackDucking() {
+	return stack_ducking;
 }
 
 // ----------------------------------------------------------------------------
