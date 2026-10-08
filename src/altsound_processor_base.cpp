@@ -24,6 +24,7 @@ extern StreamArray channel_stream;
 float AltsoundProcessorBase::global_vol = 1.0f;
 float AltsoundProcessorBase::master_vol = 1.0f;
 unsigned int AltsoundProcessorBase::duck_release_ms = 0;
+bool AltsoundProcessorBase::stack_ducking = false;
 
 // reference to sound command recording status
 extern bool rec_snd_cmds;

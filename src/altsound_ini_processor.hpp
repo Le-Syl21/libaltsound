@@ -64,6 +64,8 @@ public:
 
 	// Return parsed duck release time
 	unsigned int getDuckReleaseMs() const;
+	// Return parsed duck stacking flag
+	bool stackDucking() const;
 
 private: // functions
 
@@ -101,6 +103,7 @@ private: // data
 	string altsound_format;
 	unsigned int skip_count = 0;
 	unsigned int duck_release_ms = 0;
+	bool stack_ducking = false;
 };
 
 // ----------------------------------------------------------------------------
@@ -140,6 +143,10 @@ inline unsigned int AltsoundIniProcessor::getSkipCount() const {
 
 inline unsigned int AltsoundIniProcessor::getDuckReleaseMs() const {
 	return duck_release_ms;
+}
+
+inline bool AltsoundIniProcessor::stackDucking() const {
+	return stack_ducking;
 }
 
 #endif // ALTSOUND_INI_PROCESSOR_H

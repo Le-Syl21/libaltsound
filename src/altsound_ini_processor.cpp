@@ -123,6 +123,11 @@ bool AltsoundIniProcessor::parse_altsound_ini(const std::filesystem::path& path_
 		ALT_ERROR(0, "Number out of range while parsing duck_release_ms value: %s\n", duck_release_str.c_str());
 		return false;
 	}
+	// get duck stacking flag
+	string stack_ducking_str;
+	inipp::get_value(ini.sections["system"], "stack_ducking", stack_ducking_str);
+	stack_ducking = (stack_ducking_str == "1");
+	ALT_INFO(0, "Parsed \"stack_ducking\": %s", stack_ducking ? "true" : "false");
 
 	// get AltSound format type
 	inipp::get_value(ini.sections["format"], "format", altsound_format);
@@ -628,6 +633,11 @@ bool AltsoundIniProcessor::create_altsound_ini(const std::filesystem::path& path
 		";                     comes back over this many milliseconds instead of at\n"
 		";                     once (many sound boards fade the music back in over\n"
 		";                     about 150 ms). 0, the default, restores it at once\n"
+		"; stack_ducking     : when several samples duck the same sample at once, their\n"
+		";                     ducking values are multiplied (two samples ducking to 67\n"
+		";                     give 45, as the ducks add up in dB on many sound boards)\n"
+		";                     instead of using only the lowest one. This feature is\n"
+		";                     turned off by default\n"
 		"; ----------------------------------------------------------------------------\n"
 		"\n"
 		"[system]\n"
@@ -636,6 +646,7 @@ bool AltsoundIniProcessor::create_altsound_ini(const std::filesystem::path& path
 		"rom_volume_ctrl = 1\n"
 		"cmd_skip_count = 0\n"
 		"duck_release_ms = 0\n"
+		"stack_ducking = 0\n"
 		"\n"
 		"; ----------------------------------------------------------------------------\n"
 		"; There are three supported AltSound formats:\n"
@@ -713,7 +724,7 @@ bool AltsoundIniProcessor::create_altsound_ini(const std::filesystem::path& path
 		"; - if multiple ducking values apply to a single sample, the lowest\n"
 		";   ducking value is used. When the sample with the lowest duck value ends,\n"
 		";   the next lowest duck value is used, and so on, until all affecting samples\n"
-		";   have ended.\n"
+		";   have ended. With stack_ducking = 1, they are multiplied instead.\n"
 		"; - ducking/pausing ends when the last affecting sample that set it has ended\n"
 		"; - If \"ducks\" variable is set, there must be at least one ducking_profile\n"
 		";   defined\n"
