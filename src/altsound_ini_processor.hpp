@@ -66,6 +66,8 @@ public:
 	unsigned int getDuckReleaseMs() const;
 	// Return parsed duck stacking flag
 	bool stackDucking() const;
+	// Return parsed loop points flag
+	bool usingLoopPoints() const;
 
 private: // functions
 
@@ -104,6 +106,7 @@ private: // data
 	unsigned int skip_count = 0;
 	unsigned int duck_release_ms = 0;
 	bool stack_ducking = false;
+	bool use_loop_points = false;
 };
 
 // ----------------------------------------------------------------------------
@@ -147,6 +150,10 @@ inline unsigned int AltsoundIniProcessor::getDuckReleaseMs() const {
 
 inline bool AltsoundIniProcessor::stackDucking() const {
 	return stack_ducking;
+}
+
+inline bool AltsoundIniProcessor::usingLoopPoints() const {
+	return use_loop_points;
 }
 
 #endif // ALTSOUND_INI_PROCESSOR_H
