@@ -28,6 +28,7 @@ AltsoundLogger alog;
 AltsoundProcessorBase* g_pProcessor = NULL;
 ALTSOUND_HARDWARE_GEN g_hardwareGen = ALTSOUND_HARDWARE_GEN_NONE;
 CmdData g_cmdData;
+bool g_newSoundCommands = false; // "new_sound_commands" of the pack's altsound.ini, see altsound_preprocess_commands
 
 std::unordered_map<unsigned int, _internal_stream_data> g_streamMap;
 std::mutex g_streamMapMutex;
@@ -289,6 +290,26 @@ void altsound_preprocess_commands(int cmd)
 
 			break;
 		}
+
+		case ALTSOUND_HARDWARE_GEN_BY17: // PinMAME logs one byte per sound command
+		case ALTSOUND_HARDWARE_GEN_BY35:
+		default: { // and so on every generation without a case above
+			if (g_newSoundCommands) {
+				// Packs made for the real sound commands: one byte, one command
+				ALT_DEBUG(0, "Hardware Generation: BY17, BY35 or other (one byte per command)");
+
+				g_cmdData.stored_command = 0;
+				g_cmdData.cmd_counter = 0;
+				g_cmdData.cmd_filter = 0;
+			}
+			else {
+				// Older packs: the bytes are paired two by two, as they always were
+				// before the one byte case existed
+				ALT_DEBUG(0, "Hardware Generation: BY17, BY35 or other (bytes paired)");
+			}
+
+			break;
+		}
 	}
 
 	ALT_OUTDENT;
@@ -351,6 +372,18 @@ ALTSOUNDAPI void AltSoundSetLogger(const string& logPath, ALTSOUND_LOG_LEVEL log
 	alog.setLogPath(logPath);
 	alog.setLogLevel((AltsoundLogger::Level)logLevel);
 	alog.enableConsole(console);
+}
+
+/******************************************************
+ * AltSoundGetNewSoundCommands
+ ******************************************************/
+
+ALTSOUNDAPI bool AltSoundGetNewSoundCommands(const string& pinmamePath, const string& gameName)
+{
+	AltsoundIniProcessor ini_proc;
+	if (!ini_proc.parse_altsound_ini(std::filesystem::path(pinmamePath) / "altsound" / gameName))
+		return false;
+	return ini_proc.newSoundCommands();
 }
 
 /******************************************************
@@ -436,6 +469,7 @@ ALTSOUNDAPI bool AltSoundInit(const string& pinmamePath, const string& gameName,
 	g_pProcessor->recordSoundCmds(ini_proc.recordSoundCmds());
 	g_pProcessor->setSkipCount(ini_proc.getSkipCount());
 	g_pProcessor->setDuckReleaseMs(ini_proc.getDuckReleaseMs());
+	g_newSoundCommands = ini_proc.newSoundCommands();
 
 	// perform processor initialization (load samples, etc)
 	g_pProcessor->init();
